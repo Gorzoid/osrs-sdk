@@ -62,3 +62,12 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
       - 426 # fire bow
       - 5061 # fire blowpipe
       - 7618 # throw chinchompa
+
+
+### Olm
+
+```sh
+npm run cmd modelBuilder exclude 32522,32525,32517 object 29880 anim 7336,7345 name olm_head
+npm run cmd modelBuilder exclude 32522,32525,32517 object 29883 anim 7351 name olm_right_hand
+npm run cmd modelBuilder exclude 32522,32525,32517 object 29886 anim 7355 name olm_left_hand
+```

@@ -4,7 +4,8 @@ import { Assets, Entity, CollisionType, LineOfSightMask, Model, GLTFModel } from
 
 
 // note: v1 has the rocks where zuk should be - we could use that in the future
-export const SampleSceneModel = Assets.getAssetUrl("models/scene-v3.glb");
+// export const SampleSceneModel = Assets.getAssetUrl("models/scene-v3.glb");
+import SampleSceneModel from "../src/assets/scene.glb";
 
 export class SampleScene extends Entity {
   get collisionType() {
@@ -32,7 +33,7 @@ export class SampleScene extends Entity {
   }
 
   create3dModel(): Model {
-    return new GLTFModel(this, [SampleSceneModel], { scale: 1, verticalOffset: -2.5, originOffset: {
+    return new GLTFModel(this, [SampleSceneModel], { scale: 1, verticalOffset: -6.8, originOffset: {
       x: -6.5,
       y: 12.5,
     }});

@@ -6,6 +6,7 @@ import {
   DragonArrows,
   FerociousGloves,
   InfernalCape,
+  Location,
   MasoriBodyF,
   MasoriChapsF,
   MasoriMaskF,
@@ -15,7 +16,7 @@ import {
   PrimordialBoots,
   Region,
   SaradominBrew,
-  ScytheOfVitur,
+  BladeOfSaeldor,
   StaminaPotion,
   SuperRestore,
   TorvaFullhelm,
@@ -24,7 +25,8 @@ import {
   TwistedBow,
   UltorRing,
 } from "../src";
-import { SampleNpc } from "./SampleNpc";
+import { InvisWall } from "./InvisWall";
+import { OlmHead, OlmHand } from "./Olm";
 import { SampleScene } from "./SampleScene";
 
 export class SampleRegion extends Region {
@@ -52,7 +54,7 @@ export class SampleRegion extends Region {
     this.addPlayer(player);
     const loadout = {
       equipment: {
-        weapon: new ScytheOfVitur(),
+        weapon: new BladeOfSaeldor(),
         offhand: null,
         helmet: new TorvaFullhelm(),
         necklace: new AmuletOfTorture(),
@@ -96,10 +98,27 @@ export class SampleRegion extends Region {
       ],
     };
     player.setUnitOptions(loadout);
+  
+    const head = new OlmHead(this, { x: 16, y: 18 }, {});
+    this.addMob(head);
+    this.addMob(new OlmHand('left', head, this, { x: 17, y: 23 }, {}));
+    this.addMob(new OlmHand('right', head, this, { x: 17, y: 13 }, {}));
 
-    this.addMob(new SampleNpc(this, { x: 25, y: 20 }, {}));
 
     this.addEntity(new SampleScene(this, { x: 0, y: 48 }));
+
+    let boxTopLeft: Location = { x: 22, y: 8 };
+    let boxBottomRight: Location = { x: 31, y: 25 };
+    for (let x = boxTopLeft.x; x <= boxBottomRight.x; ++x) {
+      this.addEntity(new InvisWall(this, {x, y: boxTopLeft.y - 1}));
+      this.addEntity(new InvisWall(this, {x, y: boxBottomRight.y + 1}));
+    }
+    for (let y = boxTopLeft.y; y <= boxBottomRight.y; ++y) {
+      this.addEntity(new InvisWall(this, {x: boxTopLeft.x - 1, y}));
+      this.addEntity(new InvisWall(this, {x: boxBottomRight.x + 1, y}));
+    }
+
+    this.addEntity(new InvisWall(this, {x: boxBottomRight.x, y: boxTopLeft.y}));
 
     return { player };
   }

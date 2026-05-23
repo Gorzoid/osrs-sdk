@@ -351,7 +351,7 @@ export class Mob extends Unit {
     } else {
       this.attackFeedback = AttackIndicators.HIT;
     }
-    this.weapons[this.attackStyle].attack(this, this.aggro as Unit /* hack */, {
+    this.weapons[this.attackStyle].attack(this, this.aggro, {
       attackStyle: this.attackStyle,
       magicBaseSpellDamage: this.magicMaxHit(),
     });

@@ -69,9 +69,9 @@ export class TwistedBow extends RangedWeapon {
 
   get attackSpeed() {
     if (this.attackStyle() === AttackStyle.LONGRANGE) {
-      return 6;
+      return 4;
     }
-    return 5;
+    return 4;
   }
 
   get attackSound() {
@@ -91,7 +91,7 @@ export class TwistedBow extends RangedWeapon {
   }
 
   get attackRange() {
-    return 10;
+    return 7;
   }
 
   get inventoryImage() {
