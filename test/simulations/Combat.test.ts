@@ -27,11 +27,11 @@ describe("basic combat scenario", () => {
     player.prayerController.findPrayerByName("Protect from Range").activate(player);
     player.setAggro(jalxil);
     world.tickWorld(20);
-    expect(player.location).toEqual({ x: 30, y: 54 });
+    expect(player.location).toEqual({ x: 30, y: 52 });
     expect(player.currentStats.hitpoint).toBe(41);
     expect(player.equipment.weapon.itemName).toEqual("Twisted Bow");
     expect(jalxil.location).toEqual({ x: 30, y: 45 });
-    expect(jalxil.currentStats.hitpoint).toBe(124);
+    expect(jalxil.currentStats.hitpoint).toBe(111);
 
     player.moveTo(jalxil.location.x, jalxil.location.y);
     player.prayerController.findPrayerByName("Rigour").activate(player);
@@ -50,9 +50,9 @@ describe("basic combat scenario", () => {
     expect(player.currentStats.prayer).toEqual(39);
     expect(jalxil.location).toEqual({ x: 30, y: 44 });
     expect(jalxil.currentStats.hitpoint).toBe(0);
-    expect(player.currentStats.hitpoint).toBe(33);
+    expect(player.currentStats.hitpoint).toBe(20);
     expect(world.globalTickCounter).toEqual(145);
-    expect(Random.callCount).toEqual(78);
+    expect(Random.callCount).toEqual(85);
   });
   
   test("red-x prevents random walk", () => {

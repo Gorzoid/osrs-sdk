@@ -55,6 +55,7 @@
     "webpack-merge": "^5.10.0"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^1.0.0",
     "@types/new-relic-browser": "^0.1118.2",
     "@types/offscreencanvas": "^2019.6.4",
     "chebyshev": "^0.2.1",

@@ -11,6 +11,9 @@ import {
   Pathing,
   Location3,
   Projectile,
+  MagicWeapon,
+  RangedWeapon,
+  Random,
 } from "../src";
 
 import OlmHeadModel from "../src/assets/olm_head.glb";
@@ -21,6 +24,34 @@ enum HeadDirection {
   LEFT,
   RIGHT,
   CENTER,
+}
+
+class OlmMagicWeapon extends MagicWeapon {
+  constructor() {
+    super({
+      model: Assets.getAssetUrl("models/olm_magic_projectile.glb"),
+    });
+  }
+
+  override _baseSpellDamage() {
+    return 33;
+  }
+
+  override _magicDamageBonusMultiplier() {
+    return 1;
+  }
+}
+
+class OlmRangedWeapon extends RangedWeapon {
+  constructor() {
+    super({
+      model: Assets.getAssetUrl("models/olm_range_projectile.glb"),
+    });
+  }
+
+  override _maxHit() {
+    return 33;
+  }
 }
 
 export class OlmHead extends Mob {
@@ -35,6 +66,8 @@ export class OlmHead extends Mob {
   override setStats() {
     this.weapons = {
       slash: new MeleeWeapon(),
+      magic: new OlmMagicWeapon(),
+      range: new OlmRangedWeapon(),
     };
 
     this.stats = {
@@ -72,7 +105,7 @@ export class OlmHead extends Mob {
       other: {
         meleeStrength: 40,
         rangedStrength: 0,
-        magicDamage: 0,
+        magicDamage: 1,
         prayer: 0,
       },
     };
@@ -83,7 +116,7 @@ export class OlmHead extends Mob {
   }
 
   attackStyleForNewAttack() {
-    return "slash";
+    return this.attackStyle ?? "magic";
   }
 
   get attackRange() {
@@ -140,23 +173,10 @@ export class OlmHead extends Mob {
       return false;
     }
 
-    const phase = Math.floor(this.cycleNumber / 4);
-
     const centerY = this.location.y - 2;
     const dy = this.aggro.location.y - centerY;
 
-    switch (this.headDirection) {
-      case -1:
-        this.didOlmAttack = dy >= 0;
-        break;
-      case 1:
-        this.didOlmAttack = dy <= 0;
-        break;
-      case 0:
-        this.didOlmAttack = Math.abs(dy) < 6;
-        break;
-    }
-
+    // Handle turning
     if (!this.didOlmAttack && this.leftHandDamage && dy >= 0) {
       this.headDirection = -1;
     } else if (!this.didOlmAttack && this.rightHandDamage && dy <= 0) {
@@ -170,6 +190,46 @@ export class OlmHead extends Mob {
     }
 
     this.leftHandDamage = this.rightHandDamage = 0;
+
+    // Only attack if looking in the right direction
+    let isLookingAtTarget = false;
+    switch (this.headDirection) {
+      case -1:
+        isLookingAtTarget = dy >= 0;
+        break;
+      case 1:
+        isLookingAtTarget = dy <= 0;
+        break;
+      case 0:
+        isLookingAtTarget = Math.abs(dy) < 6;
+        break;
+    }
+
+    if (!isLookingAtTarget) {
+      this.didOlmAttack = false;
+      return false; // don't progress cycle if we aren't looking at them
+    }
+
+    console.log(`Olm attack YES! cycle=${this.cycleNumber % 4}`);
+
+    this.didOlmAttack = true;
+
+    const cycle = this.cycleNumber % 4;
+    this.cycleNumber++;
+
+    if (cycle === 0 || cycle === 2) {
+      // Basic Attack
+      this.attackStyle = Random.get() > 0.5 ? "magic" : "range";
+      return super.attack();
+    } else if (cycle === 1) {
+      // Null cycle
+      this.didOlmAttack = false; // no attack anim
+      return true; // Return true so attackDelay is reset
+    } else if (cycle === 3) {
+      // Special attack (placeholder to basic attack for now)
+      this.attackStyle = Random.get() > 0.5 ? "magic" : "range";
+      return super.attack();
+    }
 
     return true;
   }
