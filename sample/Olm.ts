@@ -176,46 +176,47 @@ export class OlmHead extends Mob {
     const centerY = this.location.y - 2;
     const dy = this.aggro.location.y - centerY;
 
+    const cycle = this.cycleNumber % 4;
+    this.cycleNumber++;
+
+    // Only attack if looking in the right direction
+    let scanResult = false;
+    switch (this.headDirection) {
+      case -1:
+        scanResult = dy >= 0;
+        break;
+      case 1:
+        scanResult = dy <= 0;
+        break;
+      case 0:
+        scanResult = Math.abs(dy) < 6;
+        break;
+    }
+
     // Handle turning
-    if (!this.didOlmAttack && this.leftHandDamage && dy >= 0) {
-      this.headDirection = -1;
-    } else if (!this.didOlmAttack && this.rightHandDamage && dy <= 0) {
-      this.headDirection = 1;
-    } else if (dy >= 6) {
-      this.headDirection = -1;
-    } else if (dy <= -6) {
-      this.headDirection = 1;
-    } else {
-      this.headDirection = 0;
+    const canTurnOnAttack = cycle == 1 || cycle == 3;
+    if (!scanResult || canTurnOnAttack) {
+      if (!this.didOlmAttack && this.leftHandDamage && dy >= 0) {
+        this.headDirection = -1;
+      } else if (!this.didOlmAttack && this.rightHandDamage && dy <= 0) {
+        this.headDirection = 1;
+      } else if (dy >= 6) {
+        this.headDirection = -1;
+      } else if (dy <= -6) {
+        this.headDirection = 1;
+      } else {
+        this.headDirection = 0;
+      }
     }
 
     this.leftHandDamage = this.rightHandDamage = 0;
 
-    // Only attack if looking in the right direction
-    let isLookingAtTarget = false;
-    switch (this.headDirection) {
-      case -1:
-        isLookingAtTarget = dy >= 0;
-        break;
-      case 1:
-        isLookingAtTarget = dy <= 0;
-        break;
-      case 0:
-        isLookingAtTarget = Math.abs(dy) < 6;
-        break;
-    }
-
-    if (!isLookingAtTarget) {
+    if (!scanResult) {
       this.didOlmAttack = false;
-      return false; // don't progress cycle if we aren't looking at them
+      return true;
     }
-
-    console.log(`Olm attack YES! cycle=${this.cycleNumber % 4}`);
 
     this.didOlmAttack = true;
-
-    const cycle = this.cycleNumber % 4;
-    this.cycleNumber++;
 
     if (cycle === 0 || cycle === 2) {
       // Basic Attack
@@ -228,6 +229,7 @@ export class OlmHead extends Mob {
     } else if (cycle === 3) {
       // Special attack (placeholder to basic attack for now)
       this.attackStyle = Random.get() > 0.5 ? "magic" : "range";
+      this.didOlmAttack = false; // Hide attack animation for special
       return super.attack();
     }
 
